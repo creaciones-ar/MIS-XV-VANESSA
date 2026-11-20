@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis 15 Años - Liliana</title>
+    <title>Mis 15 Años - Iara</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Allura&family=Mrs+Saint+Delafield&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Monsieur+La+Doulaise&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=45">
+    <link rel="stylesheet" href="styles.css?v=1">
 </head>
 <body class="welcome-active">
 
-    <!-- Ornamento de esquina del sobre (dibujado con código, no hace falta ninguna imagen) -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
         <defs>
             <symbol id="orn" viewBox="0 0 80 80">
@@ -30,14 +29,14 @@
     <div id="welcome-screen">
         <div class="welcome-card">
             <div class="welcome-content">
-                <h2 class="welcome-name fit-line" data-fit="welcome" data-max="190" data-min="60">Liliana</h2>
+                <h2 class="welcome-name fit-line" data-fit="welcome" data-max="190" data-min="60">Iara</h2>
                 <p class="welcome-sub">Mis XV años</p>
 
                 <div id="envelope" class="envelope">
                     <div class="env-back"></div>
                     <div class="env-letter">
                         <span class="letter-small">Mis quince años</span>
-                        <span class="letter-name">Liliana</span>
+                        <span class="letter-name">Iara</span>
                         <span class="letter-line"></span>
                         <span class="letter-small">Te invito a celebrar</span>
                     </div>
@@ -51,7 +50,7 @@
                         <i class="sp s1"></i><i class="sp s2"></i><i class="sp s3"></i><i class="sp s4"></i>
                         <i class="sp s5"></i><i class="sp s6"></i><i class="sp s7"></i>
                     </div>
-                    <button id="open-btn" class="seal" aria-label="Abrir la invitación"><span>L</span></button>
+                    <button id="open-btn" class="seal" aria-label="Abrir la invitación"><span>I</span></button>
                 </div>
 
                 <p class="welcome-instruction">Toca el sello para abrir</p>
@@ -59,7 +58,6 @@
         </div>
     </div>
 
-    <!-- Audio de fondo -->
     <audio id="background-music" loop>
         <source src="musica.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
@@ -69,10 +67,9 @@
     <main id="main-content" class="marco hidden">
         <div class="marco-lados" aria-hidden="true"></div>
 
-        <!-- Sección 1: tiara, nombre, reproductor, "Mis 15 años", mensaje + polaroids -->
         <section class="hero-section">
             <img src="tiara.png" alt="" class="tiara" onerror="this.style.display='none'">
-            <h1 class="hero-name fit-line" data-fit="hero" data-max="150" data-min="40">Liliana</h1>
+            <h1 class="hero-name fit-line" data-fit="hero" data-max="150" data-min="40">Iara</h1>
 
             <div class="music-player" aria-label="Reproductor de música">
                 <div class="progress" id="progress" role="progressbar" aria-label="Progreso de la canción">
@@ -106,30 +103,30 @@
 
             <div class="hero-row hero-side">
                 <div class="message">
-                    <p class="message-text">Dejo atrás una etapa con una sonrisa gigante y abro los brazos para recibir una de las etapas más esperadas: mis 15 años. Comienza un nuevo camino lleno de sueños por cumplir y quiero celebrarlo rodeado de la gente que más quiero. Tu amistad y tu compañía son muy importantes para mí, por eso no puedo imaginar esta noche tan especial sin ti.</p>
+                    <p class="message-text">Hay recuerdos que no voy a borrar, personas que no voy a olvidar y momentos como este que siempre voy a guardar, porque son parte de mi vida, porque simplemente los quiero y es mi deseo que compartan conmigo la alegría de mis 15 años.</p>
                 </div>
 
+                <!-- Las fotos ya vienen con su marco de polaroid: se muestran tal cual -->
                 <div class="polaroid-stack">
-                    <div class="polaroid-card tilt-right"><img src="foto1.jpg?v=2" alt="Liliana foto 1"></div>
-                    <div class="polaroid-card tilt-left"><img src="foto2.jpg?v=2" alt="Liliana foto 2"></div>
+                    <img class="photo" src="foto1.jpg" alt="Iara foto 1">
+                    <img class="photo" src="foto2.jpg" alt="Iara foto 2">
                 </div>
             </div>
         </section>
 
-        <!-- Sección 2: fecha (9 de febrero de 2027 es MARTES) -->
+        <!-- Fecha: 19 de diciembre de 2026 es SÁBADO -->
         <section class="date-section">
-            <p class="month-label">febrero</p>
+            <p class="month-label">diciembre</p>
             <div class="date-row">
-                <span class="side-label left">Martes</span>
+                <span class="side-label left">Sábado</span>
                 <div class="date-frame">
-                    <h2>09</h2>
-                    <p class="year-label">2027</p>
+                    <h2>19</h2>
+                    <p class="year-label">2026</p>
                 </div>
-                <span class="side-label right">21:00 HS</span>
+                <span class="side-label right">22:00 HS</span>
             </div>
         </section>
 
-        <!-- Sección 3: cuenta regresiva -->
         <section class="countdown-section">
             <h3 class="script-title">Faltan</h3>
             <div id="countdown" class="countdown-grid">
@@ -141,35 +138,33 @@
             </div>
         </section>
 
-        <!-- Sección 4: ubicación -->
+        <!-- Ubicación -->
         <section class="location-section">
             <div class="location-photo-wrapper">
-                <img src="foto3.jpg?v=2" alt="Salón Costa Eventos" class="torn-edge-photo">
+                <img src="foto3.jpg" alt="Iara foto 3" class="torn-edge-photo">
             </div>
             <div class="location-content-box">
                 <div class="icon-container">
                     <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 58C32 58 14 40 14 26a18 18 0 0 1 36 0c0 14-18 32-18 32z"/><circle cx="32" cy="26" r="7"/><path class="sp" d="M53 7l1.6 4.4L59 13l-4.4 1.6L53 19l-1.6-4.4L47 13l4.4-1.6z"/></svg>
                 </div>
                 <h3 class="script-title small fit-title" data-fit="loc" data-max="46" data-min="18">Lugar del evento</h3>
-                <p class="location-name">Fiesta Evento</p>
-                <a href="https://www.google.com/maps/place/Costa+Eventos/@-40.8708992,-62.9267436,17z/data=!4m6!3m5!1s0x95f69ba4b6e3d8ef:0x5a9873fe41a518b2!8m2!3d-40.8708597!4d-62.9241029!16s%2Fg%2F11q3sqxfh7?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="btn-silver big">Ubicación</a>
+                <p class="location-name">Barrio Julio Abraham<br>Mz. R, Lote 6<br>Alderetes</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Barrio+Julio+Abraham+Alderetes+Tucum%C3%A1n" target="_blank" rel="noopener" class="btn-silver big">Ubicación</a>
             </div>
         </section>
 
-        <!-- Sección 5: dress code y regalos -->
+        <!-- Dress code y regalos -->
         <section class="info-section">
             <div class="info-block">
                 <div class="icon-container">
                     <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M24 6l-3 22-9 30h40l-9-30-3-22"/><path d="M21 28h22"/><path d="M24 6c2 5 14 5 16 0"/><path class="sp" d="M52 8l1.6 4.4L58 14l-4.4 1.6L52 20l-1.6-4.4L46 14l4.4-1.6z"/></svg>
                 </div>
                 <h3 class="script-title fit-title" data-fit="info" data-max="64" data-min="18">Dress Code</h3>
-                <p class="info-text">Casual</p>
                 <div class="forbidden">
-                    <p class="forbidden-title">Se reservan los colores blanco, plateado y azul para la cumpleañera</p>
+                    <p class="forbidden-title">Se reservan los colores celeste y plateado para la cumpleañera</p>
                     <div class="color-circles">
-                        <span class="swatch swatch-white"></span>
                         <span class="swatch swatch-silver"></span>
-                        <span class="swatch swatch-blue"></span>
+                        <span class="swatch swatch-celeste"></span>
                     </div>
                     <p class="forbidden-note">(en todas las tonalidades)</p>
                 </div>
@@ -182,28 +177,29 @@
                 <h3 class="script-title gift-title fit-title" data-fit="info" data-max="64" data-min="18">¡El mejor regalo es tu presencia!</h3>
                 <p class="info-text">Pero si deseas hacerme un obsequio, puedes hacerlo mediante el siguiente</p>
                 <p class="alias-label">ALIAS:</p>
-                <p class="alias-text" id="alias-text">Lililuces.mp</p>
+                <!-- PENDIENTE: reemplazar por el alias real de Iara -->
+                <p class="alias-text" id="alias-text">ALIAS.IARA</p>
                 <button type="button" id="alias-copy" class="btn-silver big" style="margin-top:26px;cursor:pointer">Copiar alias</button>
             </div>
         </section>
 
-        <!-- Sección 6: polaroids finales y confirmación -->
+        <!-- Fotos finales y confirmación -->
         <section class="final-section">
             <div class="polaroid-row">
-                <div class="polaroid-card tilt-right"><img src="foto4.jpg?v=2" alt="Liliana foto 4"></div>
-                <div class="polaroid-card tilt-left"><img src="foto5.jpg?v=2" alt="Liliana foto 5"></div>
+                <img class="photo" src="foto4.jpg" alt="Iara foto 4">
+                <img class="photo" src="foto5.jpg" alt="Iara foto 5">
             </div>
 
             <div class="rsvp-container">
                 <h3 class="script-title fit-title" data-fit="rsvp" data-max="72" data-min="18">Confirmación de asistencia</h3>
                 <p class="rsvp-desc">¡Te espero para compartir la alegría de este gran día!</p>
-                <a href="https://wa.me/5491121825254?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Liliana." target="_blank" rel="noopener" class="btn-silver big">Confirmar</a>
-                <p class="rsvp-note">Confirmar antes del 1 de Febrero</p>
+                <a href="https://wa.me/5493815476047?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Iara." target="_blank" rel="noopener" class="btn-silver big">Confirmar</a>
+                <p class="rsvp-note">Confirmar antes del 14 de Diciembre</p>
             </div>
         </section>
 
     </main>
 
-    <script src="script.js?v=12"></script>
+    <script src="script.js?v=1"></script>
 </body>
 </html>
