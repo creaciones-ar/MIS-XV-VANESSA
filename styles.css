@@ -187,19 +187,26 @@ main#main-content > section{position:relative;z-index:1}
 .icon-container svg{width:100%;height:100%;fill:none;stroke:var(--azul);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 .icon-container svg .sp{fill:var(--plateado-oscuro);stroke:none}
 
-/* ---------- 11. UBICACIÓN ---------- */
-.location-section{flex-direction:row;justify-content:center;align-items:center;gap:12px;padding:40px 0 50px}
-.location-photo-wrapper{display:flex;justify-content:flex-start;flex:0 0 54%}
+/* ---------- 11. UBICACIÓN ----------
+   La foto y la columna de texto miden lo mismo: el ícono arranca donde arranca la foto y el botón termina donde termina la foto */
+.location-section{flex-direction:row;justify-content:center;align-items:stretch;gap:14px;padding:40px 0 50px}
+.location-photo-wrapper{display:flex;align-items:center;flex:0 0 50%}
 .torn-edge-photo{width:100%;height:auto;max-width:none;mix-blend-mode:multiply}
-.location-content-box{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;container-type:inline-size}
-.location-content-box .icon-container{margin-bottom:12px}
-.location-content-box .script-title.small{font-size:clamp(1.8rem,7vw,3rem);font-size:min(17cqw,3.2rem);white-space:nowrap}
-.location-name{font-size:clamp(.85rem,3vw,1.2rem);letter-spacing:1px;line-height:1.4;margin-bottom:22px;color:var(--texto)}
+.location-content-box{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;container-type:inline-size;padding:2px 0 8px}
+.location-content-box .icon-container{width:clamp(52px,14vw,72px);height:clamp(52px,14vw,72px);margin:0}
+.location-content-box .script-title.small{font-size:min(17cqw,3rem);white-space:nowrap;margin:0}
+.location-name{font-size:5.6cqw;letter-spacing:.2px;line-height:1.55;margin:0;color:var(--texto);white-space:nowrap}
+.location-name span{display:block}
+.location-content-box .btn-silver.big{padding:12px 4cqw 11px;letter-spacing:1.5px;font-size:min(5.6cqw,.92rem);max-width:calc(100% - 12px)}
 
-/* Botones */
-.btn-silver{display:inline-block;padding:11px 26px 10px;border-radius:40px;border:none;text-decoration:none;font-family:var(--sans);font-weight:600;font-size:clamp(.82rem,2.9vw,.96rem);line-height:1.5;color:#fff;background:var(--azul);box-shadow:0 4px 10px rgba(27,54,93,.3);transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
-.btn-silver:hover{background:var(--azul-hover);transform:translateY(-2px);box-shadow:0 8px 16px rgba(27,54,93,.4)}
-.btn-silver.big{padding:14px clamp(24px,6vw,42px) 13px;font-size:clamp(.98rem,3.5vw,1.2rem);white-space:nowrap}
+/* Botones: relleno azul marino con borde plateado y brillo suave alrededor */
+.btn-silver{display:inline-block;padding:11px 28px 10px;border-radius:40px;border:3px solid transparent;text-decoration:none;text-transform:uppercase;letter-spacing:2.5px;font-family:var(--sans);font-weight:600;font-size:clamp(.78rem,2.8vw,.92rem);line-height:1.5;color:#fff;cursor:pointer;
+  background:radial-gradient(ellipse at 50% 30%,#2a4fb0 0%,#12307f 55%,#0a1e5a 100%) padding-box,
+             linear-gradient(135deg,#ffffff 0%,#aeb9c8 22%,#6f7d93 48%,#f4f6fa 72%,#9aa6ba 100%) border-box;
+  box-shadow:0 0 0 5px rgba(174,185,200,.38),0 8px 16px rgba(27,54,93,.35),inset 0 0 14px rgba(143,208,245,.3);
+  transition:transform .2s ease,box-shadow .2s ease}
+.btn-silver:hover{transform:translateY(-2px);box-shadow:0 0 0 6px rgba(174,185,200,.5),0 12px 20px rgba(27,54,93,.4),inset 0 0 14px rgba(143,208,245,.4)}
+.btn-silver.big{padding:14px clamp(24px,6vw,40px) 13px;font-size:clamp(.82rem,3vw,1rem);white-space:nowrap}
 
 /* ---------- 12. DRESS CODE Y REGALOS ---------- */
 .info-section{padding:40px 0 30px}
