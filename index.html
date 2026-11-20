@@ -1,205 +1,202 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis 15 Años - Iara</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Allura&family=Mrs+Saint+Delafield&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Monsieur+La+Doulaise&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=1">
-</head>
-<body class="welcome-active">
+document.addEventListener("DOMContentLoaded", function () {
+    const welcomeScreen = document.getElementById("welcome-screen");
+    const openBtn = document.getElementById("open-btn");
+    const music = document.getElementById("background-music");
+    const mainContent = document.getElementById("main-content");
 
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-        <defs>
-            <symbol id="orn" viewBox="0 0 80 80">
-                <path d="M3 52V14Q3 3 14 3H52"/>
-                <path d="M9 46V17Q9 9 17 9H46"/>
-                <path d="M20 20C20 13 29 11 33 16C36 21 31 26 26 24C23 22 24 19 27 19"/>
-                <path d="M20 20C13 22 11 30 15 36C17 32 19 27 20 20"/>
-                <path d="M20 20C22 13 30 11 36 15C32 17 27 19 20 20"/>
-                <path d="M33 16C40 14 46 18 50 15"/>
-                <circle cx="20" cy="20" r="1.8" fill="#fff" stroke="none"/>
-            </symbol>
-        </defs>
-    </svg>
+    const playBtn = document.getElementById("play-btn");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const player = document.querySelector(".music-player");
+    const progress = document.getElementById("progress");
+    const progressBar = document.getElementById("progress-bar");
 
-    <!-- ===== PANTALLA DE ENTRADA ===== -->
-    <div id="welcome-screen">
-        <div class="welcome-card">
-            <div class="welcome-content">
-                <h2 class="welcome-name fit-line" data-fit="welcome" data-max="190" data-min="60">Iara</h2>
-                <p class="welcome-sub">Mis XV años</p>
+    // Tamaño de la letra del mensaje: 1 = mismo alto que las fotos | 1.5 = más grande
+    const MESSAGE_SCALE = 1;
 
-                <div id="envelope" class="envelope">
-                    <div class="env-back"></div>
-                    <div class="env-letter">
-                        <span class="letter-small">Mis quince años</span>
-                        <span class="letter-name">Iara</span>
-                        <span class="letter-line"></span>
-                        <span class="letter-small">Te invito a celebrar</span>
-                    </div>
-                    <div class="env-l"></div><div class="env-r"></div><div class="env-b"></div>
-                    <div class="env-flap"></div>
-                    <div class="env-orn" aria-hidden="true">
-                        <svg class="orn orn-tl"><use href="#orn" width="100%" height="100%"/></svg>
-                        <svg class="orn orn-tr"><use href="#orn" width="100%" height="100%"/></svg>
-                        <svg class="orn orn-bl"><use href="#orn" width="100%" height="100%"/></svg>
-                        <svg class="orn orn-br"><use href="#orn" width="100%" height="100%"/></svg>
-                        <i class="sp s1"></i><i class="sp s2"></i><i class="sp s3"></i><i class="sp s4"></i>
-                        <i class="sp s5"></i><i class="sp s6"></i><i class="sp s7"></i>
-                    </div>
-                    <button id="open-btn" class="seal" aria-label="Abrir la invitación"><span>I</span></button>
-                </div>
+    // Duración de la animación del sobre antes de entrar a la invitación (ms)
+    const OPEN_DELAY = 2900;
 
-                <p class="welcome-instruction">Toca el sello para abrir</p>
-            </div>
-        </div>
-    </div>
+    // Diagnóstico: abrí la página con ?debug=1 para ver el error de audio
+    function debugMsg(text) {
+        if (!/[?&]debug/.test(location.search)) return;
+        const hint = document.querySelector(".player-hint");
+        if (hint) { hint.textContent = text; hint.style.color = "#b00020"; }
+    }
 
-    <audio id="background-music" loop>
-        <source src="musica.mp3" type="audio/mpeg">
-        Tu navegador no soporta el elemento de audio.
-    </audio>
+    // ---------- ABRIR EL SOBRE ----------
+    if (openBtn) {
+        openBtn.addEventListener("click", function () {
+            const env = document.getElementById("envelope");
+            if (env.classList.contains("open")) return;
+            env.classList.add("open");
+            welcomeScreen.classList.add("opening");
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
-    <main id="main-content" class="marco hidden">
-        <div class="marco-lados" aria-hidden="true"></div>
+            if (music) {
+                music.play().catch(function (error) {
+                    console.log("No se pudo reproducir la música:", error);
+                    debugMsg("play() falló: " + error.name);
+                    syncPlayerState();
+                });
+            }
 
-        <section class="hero-section">
-            <img src="tiara.png" alt="" class="tiara" onerror="this.style.display='none'">
-            <h1 class="hero-name fit-line" data-fit="hero" data-max="150" data-min="40">Iara</h1>
+            setTimeout(function () {
+                welcomeScreen.classList.add("hidden");
+                mainContent.classList.remove("hidden");
+                document.body.classList.remove("welcome-active");
+                window.scrollTo(0, 0);
+                requestAnimationFrame(fitAll);
+            }, OPEN_DELAY);
+        });
+    }
 
-            <div class="music-player" aria-label="Reproductor de música">
-                <div class="progress" id="progress" role="progressbar" aria-label="Progreso de la canción">
-                    <div class="progress-bar" id="progress-bar"><span class="progress-dot"></span></div>
-                </div>
-                <div class="player-controls">
-                    <button class="ctrl" type="button" aria-label="Aleatorio">
-                        <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-                    </button>
-                    <button class="ctrl" id="prev-btn" type="button" aria-label="Anterior">
-                        <svg viewBox="0 0 24 24" class="filled"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>
-                    </button>
-                    <button class="ctrl play-main" id="play-btn" type="button" aria-label="Reproducir / Pausar">
-                        <svg viewBox="0 0 24 24" class="filled icon-play"><path d="M8 5v14l11-7z"/></svg>
-                        <svg viewBox="0 0 24 24" class="filled icon-pause"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-                    </button>
-                    <button class="ctrl" id="next-btn" type="button" aria-label="Siguiente">
-                        <svg viewBox="0 0 24 24" class="filled"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>
-                    </button>
-                    <button class="ctrl" type="button" aria-label="Repetir">
-                        <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg>
-                    </button>
-                </div>
-            </div>
+    // ---------- TÍTULOS QUE SE AJUSTAN AL ANCHO ----------
+    function fitTitles() {
+        const groups = {};
+        document.querySelectorAll("[data-fit]").forEach(function (el) {
+            (groups[el.dataset.fit] = groups[el.dataset.fit] || []).push(el);
+        });
+        Object.keys(groups).forEach(function (name) {
+            const list = groups[name];
+            let best = Infinity;
+            list.forEach(function (el) {
+                const parent = el.parentElement;
+                const cs = getComputedStyle(parent);
+                const avail = (parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.98;
+                if (avail <= 0) return;
+                let lo = parseFloat(el.dataset.min || 18);
+                let hi = parseFloat(el.dataset.max || 80);
+                for (let i = 0; i < 14; i++) {
+                    const mid = (lo + hi) / 2;
+                    el.style.fontSize = mid + "px";
+                    if (el.offsetWidth <= avail) lo = mid; else hi = mid;
+                }
+                best = Math.min(best, lo);
+            });
+            if (best !== Infinity) list.forEach(function (el) { el.style.fontSize = best + "px"; });
+        });
+    }
 
-            <div class="mis-anios">
-                <span class="mis-script">Mis</span>
-                <span class="mis-num">15</span>
-                <span class="mis-script">años</span>
-            </div>
+    // ---------- MENSAJE: tamaño de letra según el alto de las fotos ----------
+    function fitMessage() {
+        document.querySelectorAll(".hero-side").forEach(function (row) {
+            const text = row.querySelector(".message-text");
+            const stack = row.querySelector(".polaroid-stack");
+            if (!text || !stack) return;
+            const target = stack.offsetHeight * MESSAGE_SCALE;
+            if (target <= 0) return;
+            let lo = 14, hi = 48;
+            for (let i = 0; i < 14; i++) {
+                const mid = (lo + hi) / 2;
+                text.style.fontSize = mid + "px";
+                if (text.offsetHeight <= target) lo = mid; else hi = mid;
+            }
+            text.style.fontSize = lo + "px";
+        });
+    }
+    function fitAll() { fitTitles(); fitMessage(); }
 
-            <div class="hero-row hero-side">
-                <div class="message">
-                    <p class="message-text">Hay recuerdos que no voy a borrar, personas que no voy a olvidar y momentos como este que siempre voy a guardar, porque son parte de mi vida, porque simplemente los quiero y es mi deseo que compartan conmigo la alegría de mis 15 años.</p>
-                </div>
+    fitTitles();
 
-                <!-- Las fotos ya vienen con su marco de polaroid: se muestran tal cual -->
-                <div class="polaroid-stack">
-                    <img class="photo" src="foto1.jpg" alt="Iara foto 1">
-                    <img class="photo" src="foto2.jpg" alt="Iara foto 2">
-                </div>
-            </div>
-        </section>
+    let fitTimer;
+    window.addEventListener("resize", function () {
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(fitAll, 120);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+    window.addEventListener("load", fitAll);
 
-        <!-- Fecha: 19 de diciembre de 2026 es SÁBADO -->
-        <section class="date-section">
-            <p class="month-label">diciembre</p>
-            <div class="date-row">
-                <span class="side-label left">Sábado</span>
-                <div class="date-frame">
-                    <h2>19</h2>
-                    <p class="year-label">2026</p>
-                </div>
-                <span class="side-label right">22:00 HS</span>
-            </div>
-        </section>
+    // ---------- REPRODUCTOR ----------
+    function syncPlayerState() {
+        if (!player || !music) return;
+        player.classList.toggle("is-playing", !music.paused);
+    }
 
-        <section class="countdown-section">
-            <h3 class="script-title">Faltan</h3>
-            <div id="countdown" class="countdown-grid">
-                <div class="time-box"><span id="days">0</span><p>DÍAS</p></div>
-                <div class="separator">:</div>
-                <div class="time-box"><span id="hours">00</span><p>HORAS</p></div>
-                <div class="separator">:</div>
-                <div class="time-box"><span id="minutes">00</span><p>MINUTOS</p></div>
-            </div>
-        </section>
+    if (music) {
+        music.addEventListener("playing", syncPlayerState);
+        music.addEventListener("pause", syncPlayerState);
+        music.addEventListener("ended", syncPlayerState);
+        music.addEventListener("error", function () {
+            player.classList.remove("is-playing");
+            console.error("No se pudo cargar musica.mp3. Revisá que el archivo exista y sea un MP3 válido.", music.error);
+            debugMsg("Error de audio, código " + (music.error ? music.error.code : "?") + " (4 = archivo no encontrado o formato no válido)");
+        });
 
-        <!-- Ubicación -->
-        <section class="location-section">
-            <div class="location-photo-wrapper">
-                <img src="foto3.jpg" alt="Iara foto 3" class="torn-edge-photo">
-            </div>
-            <div class="location-content-box">
-                <div class="icon-container">
-                    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 58C32 58 14 40 14 26a18 18 0 0 1 36 0c0 14-18 32-18 32z"/><circle cx="32" cy="26" r="7"/><path class="sp" d="M53 7l1.6 4.4L59 13l-4.4 1.6L53 19l-1.6-4.4L47 13l4.4-1.6z"/></svg>
-                </div>
-                <h3 class="script-title small fit-title" data-fit="loc" data-max="46" data-min="18">Lugar del evento</h3>
-                <p class="location-name">Barrio Julio Abraham<br>Mz. R, Lote 6<br>Alderetes</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=Barrio+Julio+Abraham+Alderetes+Tucum%C3%A1n" target="_blank" rel="noopener" class="btn-silver big">Ubicación</a>
-            </div>
-        </section>
+        music.addEventListener("timeupdate", function () {
+            if (!music.duration) return;
+            progressBar.style.width = (music.currentTime / music.duration) * 100 + "%";
+        });
+    }
 
-        <!-- Dress code y regalos -->
-        <section class="info-section">
-            <div class="info-block">
-                <div class="icon-container">
-                    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M24 6l-3 22-9 30h40l-9-30-3-22"/><path d="M21 28h22"/><path d="M24 6c2 5 14 5 16 0"/><path class="sp" d="M52 8l1.6 4.4L58 14l-4.4 1.6L52 20l-1.6-4.4L46 14l4.4-1.6z"/></svg>
-                </div>
-                <h3 class="script-title fit-title" data-fit="info" data-max="64" data-min="18">Dress Code</h3>
-                <div class="forbidden">
-                    <p class="forbidden-title">Se reservan los colores celeste y plateado para la cumpleañera</p>
-                    <div class="color-circles">
-                        <span class="swatch swatch-silver"></span>
-                        <span class="swatch swatch-celeste"></span>
-                    </div>
-                    <p class="forbidden-note">(en todas las tonalidades)</p>
-                </div>
-            </div>
+    if (playBtn) {
+        playBtn.addEventListener("click", function () {
+            if (music.paused) {
+                music.play().catch(function (e) { console.log(e); debugMsg("play() falló: " + e.name); syncPlayerState(); });
+            } else {
+                music.pause();
+            }
+        });
+    }
 
-            <div class="info-block">
-                <div class="icon-container">
-                    <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="24" width="44" height="12" rx="2"/><path d="M14 36v20h36V36M32 24v32"/><path d="M32 24c-8 0-13-6-9-10s9 2 9 10zm0 0c8 0 13-6 9-10s-9 2-9 10z"/><path class="sp" d="M54 8l1.6 4.4L60 14l-4.4 1.6L54 20l-1.6-4.4L48 14l4.4-1.6z"/></svg>
-                </div>
-                <h3 class="script-title gift-title fit-title" data-fit="info" data-max="64" data-min="18">¡El mejor regalo es tu presencia!</h3>
-                <p class="info-text">Pero si deseas hacerme un obsequio, puedes hacerlo mediante el siguiente</p>
-                <p class="alias-label">ALIAS:</p>
-                <!-- PENDIENTE: reemplazar por el alias real de Iara -->
-                <p class="alias-text" id="alias-text">ALIAS.IARA</p>
-                <button type="button" id="alias-copy" class="btn-silver big" style="margin-top:26px;cursor:pointer">Copiar alias</button>
-            </div>
-        </section>
+    [prevBtn, nextBtn].forEach(function (btn) {
+        if (btn) btn.addEventListener("click", function () { music.currentTime = 0; });
+    });
 
-        <!-- Fotos finales y confirmación -->
-        <section class="final-section">
-            <div class="polaroid-row">
-                <img class="photo" src="foto4.jpg" alt="Iara foto 4">
-                <img class="photo" src="foto5.jpg" alt="Iara foto 5">
-            </div>
+    if (progress) {
+        progress.addEventListener("click", function (e) {
+            if (!music.duration) return;
+            const rect = progress.getBoundingClientRect();
+            music.currentTime = ((e.clientX - rect.left) / rect.width) * music.duration;
+        });
+    }
 
-            <div class="rsvp-container">
-                <h3 class="script-title fit-title" data-fit="rsvp" data-max="72" data-min="18">Confirmación de asistencia</h3>
-                <p class="rsvp-desc">¡Te espero para compartir la alegría de este gran día!</p>
-                <a href="https://wa.me/5493815476047?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Iara." target="_blank" rel="noopener" class="btn-silver big">Confirmar</a>
-                <p class="rsvp-note">Confirmar antes del 14 de Diciembre</p>
-            </div>
-        </section>
+    // ---------- ALIAS: botón para copiar ----------
+    const aliasCopy = document.getElementById("alias-copy");
+    if (aliasCopy) {
+        aliasCopy.addEventListener("click", async function () {
+            const alias = document.getElementById("alias-text").textContent.trim();
+            let ok = false;
+            try { await navigator.clipboard.writeText(alias); ok = true; }
+            catch (err) {
+                const t = document.createElement("textarea");
+                t.value = alias; t.style.position = "fixed"; t.style.opacity = "0";
+                document.body.appendChild(t); t.select(); t.setSelectionRange(0, alias.length);
+                try { ok = document.execCommand("copy"); } catch (_) {}
+                t.remove();
+            }
+            aliasCopy.textContent = ok ? "¡Copiado!" : "Copialo a mano";
+            setTimeout(function () { aliasCopy.textContent = "Copiar alias"; }, 2000);
+        });
+    }
 
-    </main>
+    // ---------- CUENTA REGRESIVA ----------
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
 
-    <script src="script.js?v=1"></script>
-</body>
-</html>
+    // 19 de diciembre de 2026, 22:00 (Argentina)
+    const eventDate = new Date("2026-12-19T22:00:00-03:00").getTime();
+    const pad = function (n) { return String(n).padStart(2, "0"); };
+
+    function updateCountdown() {
+        const diff = eventDate - Date.now();
+
+        if (diff <= 0) {
+            daysEl.textContent = "0";
+            hoursEl.textContent = "00";
+            minutesEl.textContent = "00";
+            return;
+        }
+
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+
+        daysEl.textContent = days;
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
