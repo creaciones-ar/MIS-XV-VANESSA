@@ -11,16 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const progress = document.getElementById("progress");
     const progressBar = document.getElementById("progress-bar");
 
-    // =====================================================
-    //  TAMAÑO DE LA LETRA DEL MENSAJE ("Dejo atrás...")
-    //    1 = mismo alto que las fotos | 1.5 = más grande | 2 = bien grande
-    // =====================================================
+    // Tamaño de la letra del mensaje: 1 = mismo alto que las fotos | 1.5 = más grande
     const MESSAGE_SCALE = 1;
 
-    // Cuánto dura la animación del sobre antes de entrar a la invitación (milisegundos)
+    // Duración de la animación del sobre antes de entrar a la invitación (ms)
     const OPEN_DELAY = 2900;
 
-    // Diagnóstico: abrí la página con ?debug=1 al final del link para ver el error de audio
+    // Diagnóstico: abrí la página con ?debug=1 para ver el error de audio
     function debugMsg(text) {
         if (!/[?&]debug/.test(location.search)) return;
         const hint = document.querySelector(".player-hint");
@@ -28,11 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ---------- ABRIR EL SOBRE ----------
-    // Tocar el sello: suena la música, se rompe el sello, se abre la solapa, sube la carta y entra la invitación
     if (openBtn) {
         openBtn.addEventListener("click", function () {
             const env = document.getElementById("envelope");
-            if (env.classList.contains("open")) return;             // evita doble toque
+            if (env.classList.contains("open")) return;
             env.classList.add("open");
             welcomeScreen.classList.add("opening");
 
@@ -55,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ---------- TÍTULOS QUE SE AJUSTAN AL ANCHO ----------
-    // Cada título con data-fit queda en un solo renglón; los del mismo grupo usan el mismo tamaño.
     function fitTitles() {
         const groups = {};
         document.querySelectorAll("[data-fit]").forEach(function (el) {
@@ -68,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const parent = el.parentElement;
                 const cs = getComputedStyle(parent);
                 const avail = (parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.98;
-                if (avail <= 0) return;                       // sección oculta todavía
+                if (avail <= 0) return;
                 let lo = parseFloat(el.dataset.min || 18);
                 let hi = parseFloat(el.dataset.max || 80);
                 for (let i = 0; i < 14; i++) {
@@ -89,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const stack = row.querySelector(".polaroid-stack");
             if (!text || !stack) return;
             const target = stack.offsetHeight * MESSAGE_SCALE;
-            if (target <= 0) return;                          // sección oculta todavía
+            if (target <= 0) return;
             let lo = 14, hi = 48;
             for (let i = 0; i < 14; i++) {
                 const mid = (lo + hi) / 2;
@@ -101,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function fitAll() { fitTitles(); fitMessage(); }
 
-    // La pantalla de bienvenida también ajusta su título apenas carga
     fitTitles();
 
     let fitTimer;
@@ -119,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (music) {
-        // "playing" = suena de verdad (no solo se pidió reproducir)
         music.addEventListener("playing", syncPlayerState);
         music.addEventListener("pause", syncPlayerState);
         music.addEventListener("ended", syncPlayerState);
@@ -129,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
             debugMsg("Error de audio, código " + (music.error ? music.error.code : "?") + " (4 = archivo no encontrado o formato no válido)");
         });
 
-        // Barra de progreso
         music.addEventListener("timeupdate", function () {
             if (!music.duration) return;
             progressBar.style.width = (music.currentTime / music.duration) * 100 + "%";
@@ -146,12 +138,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Anterior / siguiente: reinician la canción (hay un solo tema)
     [prevBtn, nextBtn].forEach(function (btn) {
         if (btn) btn.addEventListener("click", function () { music.currentTime = 0; });
     });
 
-    // Tocar la barra para saltar a ese punto de la canción
     if (progress) {
         progress.addEventListener("click", function (e) {
             if (!music.duration) return;
@@ -184,8 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const hoursEl = document.getElementById("hours");
     const minutesEl = document.getElementById("minutes");
 
-    // 09 de febrero de 2027, 21:00 (Argentina)
-    const eventDate = new Date("2027-02-09T21:00:00-03:00").getTime();
+    // 19 de diciembre de 2026, 22:00 (Argentina)
+    const eventDate = new Date("2026-12-19T22:00:00-03:00").getTime();
     const pad = function (n) { return String(n).padStart(2, "0"); };
 
     function updateCountdown() {
