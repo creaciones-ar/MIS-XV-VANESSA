@@ -1,0 +1,212 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const welcomeScreen = document.getElementById("welcome-screen");
+    const openBtn = document.getElementById("open-btn");
+    const music = document.getElementById("background-music");
+    const mainContent = document.getElementById("main-content");
+
+    const playBtn = document.getElementById("play-btn");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const player = document.querySelector(".music-player");
+    const progress = document.getElementById("progress");
+    const progressBar = document.getElementById("progress-bar");
+
+    // =====================================================
+    //  TAMAÑO DE LA LETRA DEL MENSAJE ("Dejo atrás...")
+    //    1 = mismo alto que las fotos | 1.5 = más grande | 2 = bien grande
+    // =====================================================
+    const MESSAGE_SCALE = 1;
+
+    // Cuánto dura la animación del sobre antes de entrar a la invitación (milisegundos)
+    const OPEN_DELAY = 2900;
+
+    // Diagnóstico: abrí la página con ?debug=1 al final del link para ver el error de audio
+    function debugMsg(text) {
+        if (!/[?&]debug/.test(location.search)) return;
+        const hint = document.querySelector(".player-hint");
+        if (hint) { hint.textContent = text; hint.style.color = "#b00020"; }
+    }
+
+    // ---------- ABRIR EL SOBRE ----------
+    // Tocar el sello: suena la música, se rompe el sello, se abre la solapa, sube la carta y entra la invitación
+    if (openBtn) {
+        openBtn.addEventListener("click", function () {
+            const env = document.getElementById("envelope");
+            if (env.classList.contains("open")) return;             // evita doble toque
+            env.classList.add("open");
+            welcomeScreen.classList.add("opening");
+
+            if (music) {
+                music.play().catch(function (error) {
+                    console.log("No se pudo reproducir la música:", error);
+                    debugMsg("play() falló: " + error.name);
+                    syncPlayerState();
+                });
+            }
+
+            setTimeout(function () {
+                welcomeScreen.classList.add("hidden");
+                mainContent.classList.remove("hidden");
+                document.body.classList.remove("welcome-active");
+                window.scrollTo(0, 0);
+                requestAnimationFrame(fitAll);
+            }, OPEN_DELAY);
+        });
+    }
+
+    // ---------- TÍTULOS QUE SE AJUSTAN AL ANCHO ----------
+    // Cada título con data-fit queda en un solo renglón; los del mismo grupo usan el mismo tamaño.
+    function fitTitles() {
+        const groups = {};
+        document.querySelectorAll("[data-fit]").forEach(function (el) {
+            (groups[el.dataset.fit] = groups[el.dataset.fit] || []).push(el);
+        });
+        Object.keys(groups).forEach(function (name) {
+            const list = groups[name];
+            let best = Infinity;
+            list.forEach(function (el) {
+                const parent = el.parentElement;
+                const cs = getComputedStyle(parent);
+                const avail = (parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.98;
+                if (avail <= 0) return;                       // sección oculta todavía
+                let lo = parseFloat(el.dataset.min || 18);
+                let hi = parseFloat(el.dataset.max || 80);
+                for (let i = 0; i < 14; i++) {
+                    const mid = (lo + hi) / 2;
+                    el.style.fontSize = mid + "px";
+                    if (el.offsetWidth <= avail) lo = mid; else hi = mid;
+                }
+                best = Math.min(best, lo);
+            });
+            if (best !== Infinity) list.forEach(function (el) { el.style.fontSize = best + "px"; });
+        });
+    }
+
+    // ---------- MENSAJE: tamaño de letra según el alto de las fotos ----------
+    function fitMessage() {
+        document.querySelectorAll(".hero-side").forEach(function (row) {
+            const text = row.querySelector(".message-text");
+            const stack = row.querySelector(".polaroid-stack");
+            if (!text || !stack) return;
+            const target = stack.offsetHeight * MESSAGE_SCALE;
+            if (target <= 0) return;                          // sección oculta todavía
+            let lo = 14, hi = 48;
+            for (let i = 0; i < 14; i++) {
+                const mid = (lo + hi) / 2;
+                text.style.fontSize = mid + "px";
+                if (text.offsetHeight <= target) lo = mid; else hi = mid;
+            }
+            text.style.fontSize = lo + "px";
+        });
+    }
+    function fitAll() { fitTitles(); fitMessage(); }
+
+    // La pantalla de bienvenida también ajusta su título apenas carga
+    fitTitles();
+
+    let fitTimer;
+    window.addEventListener("resize", function () {
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(fitAll, 120);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+    window.addEventListener("load", fitAll);
+
+    // ---------- REPRODUCTOR ----------
+    function syncPlayerState() {
+        if (!player || !music) return;
+        player.classList.toggle("is-playing", !music.paused);
+    }
+
+    if (music) {
+        // "playing" = suena de verdad (no solo se pidió reproducir)
+        music.addEventListener("playing", syncPlayerState);
+        music.addEventListener("pause", syncPlayerState);
+        music.addEventListener("ended", syncPlayerState);
+        music.addEventListener("error", function () {
+            player.classList.remove("is-playing");
+            console.error("No se pudo cargar musica.mp3. Revisá que el archivo exista y sea un MP3 válido.", music.error);
+            debugMsg("Error de audio, código " + (music.error ? music.error.code : "?") + " (4 = archivo no encontrado o formato no válido)");
+        });
+
+        // Barra de progreso
+        music.addEventListener("timeupdate", function () {
+            if (!music.duration) return;
+            progressBar.style.width = (music.currentTime / music.duration) * 100 + "%";
+        });
+    }
+
+    if (playBtn) {
+        playBtn.addEventListener("click", function () {
+            if (music.paused) {
+                music.play().catch(function (e) { console.log(e); debugMsg("play() falló: " + e.name); syncPlayerState(); });
+            } else {
+                music.pause();
+            }
+        });
+    }
+
+    // Anterior / siguiente: reinician la canción (hay un solo tema)
+    [prevBtn, nextBtn].forEach(function (btn) {
+        if (btn) btn.addEventListener("click", function () { music.currentTime = 0; });
+    });
+
+    // Tocar la barra para saltar a ese punto de la canción
+    if (progress) {
+        progress.addEventListener("click", function (e) {
+            if (!music.duration) return;
+            const rect = progress.getBoundingClientRect();
+            music.currentTime = ((e.clientX - rect.left) / rect.width) * music.duration;
+        });
+    }
+
+    // ---------- ALIAS: botón para copiar ----------
+    const aliasCopy = document.getElementById("alias-copy");
+    if (aliasCopy) {
+        aliasCopy.addEventListener("click", async function () {
+            const alias = document.getElementById("alias-text").textContent.trim();
+            let ok = false;
+            try { await navigator.clipboard.writeText(alias); ok = true; }
+            catch (err) {
+                const t = document.createElement("textarea");
+                t.value = alias; t.style.position = "fixed"; t.style.opacity = "0";
+                document.body.appendChild(t); t.select(); t.setSelectionRange(0, alias.length);
+                try { ok = document.execCommand("copy"); } catch (_) {}
+                t.remove();
+            }
+            aliasCopy.textContent = ok ? "¡Copiado!" : "Copialo a mano";
+            setTimeout(function () { aliasCopy.textContent = "Copiar alias"; }, 2000);
+        });
+    }
+
+    // ---------- CUENTA REGRESIVA ----------
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+
+    // 09 de febrero de 2027, 21:00 (Argentina)
+    const eventDate = new Date("2027-02-09T21:00:00-03:00").getTime();
+    const pad = function (n) { return String(n).padStart(2, "0"); };
+
+    function updateCountdown() {
+        const diff = eventDate - Date.now();
+
+        if (diff <= 0) {
+            daysEl.textContent = "0";
+            hoursEl.textContent = "00";
+            minutesEl.textContent = "00";
+            return;
+        }
+
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+
+        daysEl.textContent = days;
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
